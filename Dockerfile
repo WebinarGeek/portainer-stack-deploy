@@ -1,5 +1,6 @@
 FROM alpine
 
 COPY "entrypoint.sh" "/entrypoint.sh"
-RUN apk --no-cache add curl jq bash ca-certificates
+RUN apk --no-cache add curl jq bash ca-certificates && \
+    update-ca-certificates
 ENTRYPOINT ["bash", "/entrypoint.sh"]
