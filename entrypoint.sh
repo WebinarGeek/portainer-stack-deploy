@@ -108,11 +108,12 @@ fi
 echo
 #echo "{\"Name\":\"'${INPUT_STACKNAME}'\",\"StackFileContent\":\"${compose}\",\"Env\":[]}"
 #输出结果
-create_content="{\"Name\":\"'${stack}'\",\"StackFileContent\":\"${compose}\",\"Env\":[]}"
-result=$(curl -k --location --request POST ''${INPUT_SERVERURL}'/api/stacks?endpointId='$INPUT_ENDPOINTID'&method=string&type=2' \
---header 'Authorization: Bearer '${token}'' \
---header 'Content-Type: application/json' \
---data-raw "$create_content")
+create_content="{\"Name\":\"${INPUT_STACKNAME}\",\"StackFileContent\":\"${compose}\",\"Env\":[]}"
+result=$(curl -k --location --request POST \
+  "${INPUT_SERVERURL}/api/stacks/create/standalone/string?endpointId=${INPUT_ENDPOINTID}" \
+  --header "X-API-Key: ${token}" \
+  --header "Content-Type: application/json" \
+  --data-raw "$create_content")
 echo "$result"
 echo
 #如果结果中message不为空则说明有异常
