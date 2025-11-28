@@ -108,7 +108,7 @@ fi
 echo
 echo "{\"Name\":\"'${INPUT_STACKNAME}'\",\"StackFileContent\":\"${compose}\",\"Env\":[]}"
 #输出结果
-create_content="{\"Name\":\"'${stack}'\",\"StackFileContent\":\"${compose}\",\"Env\":[]}"
+create_content="{\"Name\":\"'${stack}'\",\"pullImage\": true,\"StackFileContent\":\"${compose}\",\"Env\":[]}"
 result=$(curl -k --location --request POST \
   "${INPUT_SERVERURL}/api/stacks/create/standalone/string?endpointId=${INPUT_ENDPOINTID}" \
   --header 'Authorization: Bearer '${token}'' \
