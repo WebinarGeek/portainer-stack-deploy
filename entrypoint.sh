@@ -111,7 +111,7 @@ echo
 create_content="{\"Name\":\"${INPUT_STACKNAME}\",\"StackFileContent\":\"${compose}\",\"Env\":[]}"
 result=$(curl -k --location --request POST \
   "${INPUT_SERVERURL}/api/stacks/create/standalone/string?endpointId=${INPUT_ENDPOINTID}" \
-  --header "X-API-Key: ${token}" \
+  --header 'Authorization: Bearer '${token}'' \
   --header "Content-Type: application/json" \
   --data-raw "$create_content")
 echo "$result"
