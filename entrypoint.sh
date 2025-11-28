@@ -34,7 +34,7 @@ fi
 #pull image  
 #拉取镜像
 echo "pull image: $INPUT_IMAGENAME"
-base64Registry=$(echo "{\"serveraddress\":\"$INPUT_REGISTRY\"}" | base64)
+base64Registry=$(printf '{"registryId":%s}' "$INPUT_REGISTRY_ID" | base64 -w0)
 curl -k --location --request POST ''${INPUT_SERVERURL}'/api/endpoints/'$INPUT_ENDPOINTID'/docker/images/create?fromImage='$INPUT_IMAGENAME'' \
 -H "Authorization: Bearer $token"  -H "X-Registry-Auth: $base64Registry"
 
