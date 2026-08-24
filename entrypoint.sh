@@ -18,7 +18,7 @@ stack=$(echo "$INPUT_STACKNAME" | tr "[:upper:]" "[:lower:]") #ToLowerCase
 
 #请求/api/auth 进行身份验证  获取token
 echo "get token  : $INPUT_SERVERURL/api/auth"
-Token_Result=$(curl -k --location --request POST ''$INPUT_SERVERURL'/api/auth' \
+Token_Result=$(curl -k --tlsv1.2 --location --request POST ''$INPUT_SERVERURL'/api/auth' \
 --data-raw '{"Username":"'$INPUT_USERNAME'", "Password":"'$INPUT_PASSWORD'"}')
 # Token_Result = {"jwt":"xxxxxxxx"}
 #todo: get token failed  exit 1
@@ -35,7 +35,7 @@ fi
 #拉取镜像
 echo "pull image: $INPUT_IMAGENAME"
 base64Registry=$(printf '{"registryId":%s}' "$INPUT_REGISTRY_ID" | base64 -w0)
-curl -k --location --request POST ''${INPUT_SERVERURL}'/api/endpoints/'$INPUT_ENDPOINTID'/docker/images/create?fromImage='$INPUT_IMAGENAME'' \
+curl -k --tlsv1.2 --location --request POST ''${INPUT_SERVERURL}'/api/endpoints/'$INPUT_ENDPOINTID'/docker/images/create?fromImage='$INPUT_IMAGENAME'' \
 -H "Authorization: Bearer $token"  -H "X-Registry-Auth: $base64Registry"
 
 
@@ -46,7 +46,7 @@ curl -k --location --request POST ''${INPUT_SERVERURL}'/api/endpoints/'$INPUT_EN
 echo
 echo "get stacks :  $INPUT_SERVERURL/api/stacks"
 #请求/api/stacks 查询stack列表
-stacks=$(curl -k --location --request GET ''${INPUT_SERVERURL}'/api/stacks' \
+stacks=$(curl -k --tlsv1.2 --location --request GET ''${INPUT_SERVERURL}'/api/stacks' \
 --header 'Authorization: Bearer '$token'')
 echo "stacks: $stacks"
 #获取stack列表长度，如果为空则长度为0
@@ -62,7 +62,7 @@ if [ $length -gt 0  ]; then
       #find the current compose file content
       #/api/stacks/${stackId}/file
       echo "get stack file :  $INPUT_SERVERURL/api/stacks/$stackId/file"
-      file_result=$(curl -k --location --request GET ''${INPUT_SERVERURL}'/api/stacks/'${stackId}/file'' \
+      file_result=$(curl -k --tlsv1.2 --location --request GET ''${INPUT_SERVERURL}'/api/stacks/'${stackId}/file'' \
        --header 'Authorization: Bearer '$token'')
       file_msg=$(echo "$file_result" | jq -r '.message')
       if [ "$file_msg" != "null" ]; then
@@ -79,7 +79,7 @@ if [ $length -gt 0  ]; then
     echo
     echo "update stack id=$stackId"
     #找到同名stack，更新stack
-    update_result=$(curl -k --location --request PUT ''${INPUT_SERVERURL}'/api/stacks/'${stackId}?endpointId=${INPUT_ENDPOINTID}'' \
+    update_result=$(curl -k --tlsv1.2 --location --request PUT ''${INPUT_SERVERURL}'/api/stacks/'${stackId}?endpointId=${INPUT_ENDPOINTID}'' \
      --header 'Authorization: Bearer '$token'' \
      --header 'Content-Type: application/json' \
      --data-raw "$update_content")
@@ -109,7 +109,7 @@ echo
 echo "{\"Name\":\"'${INPUT_STACKNAME}'\",\"StackFileContent\":\"${compose}\",\"Env\":[]}"
 #输出结果
 create_content="{\"Name\":\"'${stack}'\",\"pullImage\": true,\"StackFileContent\":\"${compose}\",\"Env\":[]}"
-result=$(curl -k --location --request POST \
+result=$(curl -k --tlsv1.2 --location --request POST \
   "${INPUT_SERVERURL}/api/stacks/create/standalone/string?endpointId=${INPUT_ENDPOINTID}" \
   --header 'Authorization: Bearer '${token}'' \
   --header "Content-Type: application/json" \
